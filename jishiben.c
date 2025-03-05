@@ -7,10 +7,10 @@
 #define MAX_SIZE 4096
 #define MAX_FILES 5
 
-// ä¸»é¢˜æšä¸¾
+// Ö÷ÌâÃ¶¾Ù
 enum Theme { LIGHT, DARK, SOLARIZED };
 
-// å¤šæ–‡ä»¶ç»“æ„ä½“
+// ¶àÎÄ¼ş½á¹¹Ìå
 typedef struct {
 	char* data;
 	size_t length;
@@ -19,7 +19,7 @@ typedef struct {
 	int modified;
 } TextFile;
 
-// å…¨å±€çŠ¶æ€
+// È«¾Ö×´Ì¬
 struct {
 	TextFile files[MAX_FILES];
 	int current_file;
@@ -27,9 +27,9 @@ struct {
 	enum Theme current_theme;
 } AppState;
 
-// é¢œè‰²é…ç½®
+// ÑÕÉ«ÅäÖÃ
 const int THEME_COLORS[3][4] = {
-	// æ–‡å­—è‰²ï¼ŒèƒŒæ™¯è‰²ï¼Œèœå•è‰²ï¼Œé«˜äº®è‰²
+	// ÎÄ×ÖÉ«£¬±³¾°É«£¬²Ëµ¥É«£¬¸ßÁÁÉ«
 	{ 15, 0,   11, 12 },  // Light
 	{ 15, 0,   8,  4  },  // Dark
 	{ 14, 3,  11, 5  }   // Solarized
@@ -46,7 +46,7 @@ void init_file(TextFile* file) {
 	file->length = 0;
 	file->data[0] = '\0';
 	file->modified = 0;
-	strcpy(file->filename, "æœªå‘½å");
+	strcpy(file->filename, "Î´ÃüÃû");
 }
 
 void expand_buffer(TextFile* file) {
@@ -54,7 +54,7 @@ void expand_buffer(TextFile* file) {
 	file->data = realloc(file->data, file->size);
 }
 
-// ä¸»é¢˜åˆ‡æ¢
+// Ö÷ÌâÇĞ»»
 void switch_theme() {
 	AppState.current_theme = (AppState.current_theme + 1) % 3;
 	int* colors = THEME_COLORS[AppState.current_theme];
@@ -62,14 +62,14 @@ void switch_theme() {
 	set_color(colors[0], colors[1]);
 }
 
-// å…¨æ–‡æ›¿æ¢
+// È«ÎÄÌæ»»
 void replace_all(TextFile* file) {
 	char old[MAX_SIZE], new[MAX_SIZE];
-	printf("è¾“å…¥è¦æ›¿æ¢çš„æ–‡æœ¬: ");
+	printf("ÊäÈëÒªÌæ»»µÄÎÄ±¾: ");
 	fgets(old, MAX_SIZE, stdin);
 	old[strcspn(old, "\n")] = '\0';
 
-	printf("è¾“å…¥æ–°æ–‡æœ¬: ");
+	printf("ÊäÈëĞÂÎÄ±¾: ");
 	fgets(new, MAX_SIZE, stdin);
 	new[strcspn(new, "\n")] = '\0';
 
@@ -79,15 +79,15 @@ void replace_all(TextFile* file) {
 	size_t new_len = strlen(new);
 
 	while ((pos = strstr(pos, old)) != NULL) {
-		// è®¡ç®—éœ€è¦æ‰©å±•çš„ç©ºé—´
+		// ¼ÆËãĞèÒªÀ©Õ¹µÄ¿Õ¼ä
 		size_t needed = file->length + new_len - old_len;
 		while (needed >= file->size) expand_buffer(file);
 
-		// ç§»åŠ¨å†…å­˜
+		// ÒÆ¶¯ÄÚ´æ
 		memmove(pos + new_len, pos + old_len,
 			file->length - (pos - file->data) - old_len);
 
-		// æ’å…¥æ–°å†…å®¹
+		// ²åÈëĞÂÄÚÈİ
 		memcpy(pos, new, new_len);
 
 		pos += new_len;
@@ -97,20 +97,20 @@ void replace_all(TextFile* file) {
 
 	if (count > 0) {
 		file->modified = 1;
-		printf("æ›¿æ¢å®Œæˆï¼Œå…±ä¿®æ”¹ %d å¤„\n", count);
+		printf("Ìæ»»Íê³É£¬¹²ĞŞ¸Ä %d ´¦\n", count);
 	}
 	else {
-		printf("æœªæ‰¾åˆ°åŒ¹é…å†…å®¹\n");
+		printf("Î´ÕÒµ½Æ¥ÅäÄÚÈİ\n");
 	}
 }
 
-// æ–‡ä»¶æ ‡ç­¾æ˜¾ç¤º
+// ĞÂÔö£ºÎÄ¼ş±êÇ©ÏÔÊ¾
 void show_tabs() {
 	int* colors = THEME_COLORS[AppState.current_theme];
 	set_color(colors[2], colors[1]);
 	for (int i = 0; i < AppState.file_count; i++) {
 		if (i == AppState.current_file) {
-			printf("[%d] %s â˜… ", i + 1, AppState.files[i].filename);
+			printf("[%d] %s ¡ï ", i + 1, AppState.files[i].filename);
 		}
 		else {
 			printf(" %d  %s   ", i + 1, AppState.files[i].filename);
@@ -121,7 +121,7 @@ void show_tabs() {
 }
 
 int main() {
-	// åˆå§‹åŒ–åº”ç”¨çŠ¶æ€
+	// ³õÊ¼»¯Ó¦ÓÃ×´Ì¬
 	AppState.file_count = 1;
 	AppState.current_file = 0;
 	AppState.current_theme = LIGHT;
@@ -134,13 +134,13 @@ int main() {
 
 		system("cls");
 		set_color(colors[2], colors[1]);
-		printf(" F1:åˆ‡æ¢ä¸»é¢˜ | F2:æ–°å»ºæ–‡ä»¶ | F3:åˆ‡æ¢æ–‡ä»¶ | Ctrl+S:ä¿å­˜ | Ctrl+Q:é€€å‡º ");
+		printf(" F1:ÇĞ»»Ö÷Ìâ | F2:ĞÂ½¨ÎÄ¼ş | F3:ÇĞ»»ÎÄ¼ş | Ctrl+S:±£´æ | Ctrl+Q:ÍË³ö ");
 		set_color(colors[0], colors[1]);
 		printf("\n");
 
-		show_tabs(); // æ˜¾ç¤ºæ–‡ä»¶æ ‡ç­¾
+		show_tabs(); // ÏÔÊ¾ÎÄ¼ş±êÇ©
 
-		printf("\nå†…å®¹é¢„è§ˆï¼ˆå‰100å­—ç¬¦ï¼‰:\n");
+		printf("\nÄÚÈİÔ¤ÀÀ£¨Ç°100×Ö·û£©:\n");
 		set_color(colors[3], colors[1]);
 		for (int i = 0; i < (current->length > 100 ? 100 : current->length); i++) {
 			putchar(current->data[i]);
@@ -148,26 +148,26 @@ int main() {
 		set_color(colors[0], colors[1]);
 
 		printf("\n\n");
-		printf("[1] ç¼–è¾‘å†…å®¹    [2] ä¿å­˜æ–‡ä»¶    [3] å…¨æ–‡æ›¿æ¢\n");
-		printf("[4] æ‰“å¼€æ–‡ä»¶    [5] åˆ‡æ¢ä¸»é¢˜    [6] é€€å‡º\n");
-		printf("å½“å‰ä¸»é¢˜ï¼š%s | æ–‡ä»¶å¤§å°ï¼š%zuå­—èŠ‚\n",
-			AppState.current_theme == 0 ? "æ˜äº®" :
-			AppState.current_theme == 1 ? "æš—é»‘" : "Solarized",
+		printf("[1] ±à¼­ÄÚÈİ    [2] ±£´æÎÄ¼ş    [3] È«ÎÄÌæ»»\n");
+		printf("[4] ´ò¿ªÎÄ¼ş    [5] ÇĞ»»Ö÷Ìâ    [6] ÍË³ö\n");
+		printf("µ±Ç°Ö÷Ìâ£º%s | ÎÄ¼ş´óĞ¡£º%zu×Ö½Ú\n",
+			AppState.current_theme == 0 ? "Ã÷ÁÁ" :
+			AppState.current_theme == 1 ? "°µºÚ" : "Solarized",
 			current->length);
 
 		int choice;
-		printf("è¯·é€‰æ‹©æ“ä½œ: ");
+		printf("ÇëÑ¡Ôñ²Ù×÷: ");
 		scanf("%d", &choice);
 		getchar();
 
 		switch (choice) {
-		case 1: { // ç¼–è¾‘
+		case 1: { // ±à¼­
 			system("cls");
-			printf("=== ç¼–è¾‘æ¨¡å¼ï¼ˆè¾“å…¥:qè¿”å›ï¼‰===\n");
+			printf("=== ±à¼­Ä£Ê½£¨ÊäÈë:q·µ»Ø£©===\n");
 			printf("%s\n", current->data);
 
 			char input[MAX_SIZE];
-			printf("è¾“å…¥æ–°å†…å®¹: ");
+			printf("ÊäÈëĞÂÄÚÈİ: ");
 			fgets(input, MAX_SIZE, stdin);
 
 			if (strcmp(input, ":q\n") == 0) break;
@@ -182,9 +182,9 @@ int main() {
 			current->modified = 1;
 			break;
 		}
-		case 2: { // ä¿å­˜
+		case 2: { // ±£´æ
 			char filename[256];
-			printf("è¾“å…¥ä¿å­˜æ–‡ä»¶å: ");
+			printf("ÊäÈë±£´æÎÄ¼şÃû: ");
 			fgets(filename, sizeof(filename), stdin);
 			filename[strcspn(filename, "\n")] = '\0';
 
@@ -194,41 +194,41 @@ int main() {
 				fclose(file);
 				strcpy(current->filename, filename);
 				current->modified = 0;
-				printf("ä¿å­˜æˆåŠŸï¼\n");
+				printf("±£´æ³É¹¦£¡\n");
 			}
 			else {
-				printf("ä¿å­˜å¤±è´¥ï¼\n");
+				printf("±£´æÊ§°Ü£¡\n");
 			}
 			getchar();
 			break;
 		}
-		case 3: // å…¨æ–‡æ›¿æ¢
+		case 3: // È«ÎÄÌæ»»
 			replace_all(current);
 			getchar();
 			break;
-		case 4: { // æ–°å»ºæ–‡ä»¶
+		case 4: { // ĞÂ½¨ÎÄ¼ş
 			if (AppState.file_count < MAX_FILES) {
 				AppState.current_file = AppState.file_count;
 				init_file(&AppState.files[AppState.file_count]);
 				AppState.file_count++;
 			}
 			else {
-				printf("å·²è¾¾åˆ°æœ€å¤§æ–‡ä»¶æ•°ï¼\n");
+				printf("ÒÑ´ïµ½×î´óÎÄ¼şÊı£¡\n");
 			}
 			break;
 		}
-		case 5: // åˆ‡æ¢ä¸»é¢˜
+		case 5: // ÇĞ»»Ö÷Ìâ
 			switch_theme();
 			break;
 		case 6:
 			running = 0;
 			break;
 		default:
-			printf("æ— æ•ˆé€‰æ‹©ï¼\n");
+			printf("ÎŞĞ§Ñ¡Ôñ£¡\n");
 		}
 	}
 
-	// æ¸…ç†å†…å­˜
+	// ÇåÀíÄÚ´æ
 	for (int i = 0; i < AppState.file_count; i++) {
 		free(AppState.files[i].data);
 	}
